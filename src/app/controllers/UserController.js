@@ -9,6 +9,17 @@ class UserController {
       email,
     });
   }
+
+  async update(req, res) {
+    const { email, oldPassword } = req.body;
+    // if (oldPassword && !(await user.checkPassword(oldPassword))) {
+    //   return res.status(401).json({ error: 'Password dos not match' });
+    // }
+    return res.json({
+      email,
+      oldPassword,
+    });
+  }
 }
 
 export default new UserController();
