@@ -7,6 +7,7 @@ import {
   isBefore,
   startOfDay,
   endOfDay,
+  isValid,
 } from 'date-fns';
 import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
@@ -15,12 +16,20 @@ class MeetupController {
   async index(req, res) {
     const { date, page } = req.query;
 
-    console.log(`Date: ${date}`);
-    console.log(`Page: ${page}`);
-    // const meetups = await Meetup.findAll({
-    //   where: { user_id },
-    // });
-    return res.json();
+    if (page === undefined || page <= 0 || !isValid(parseISO(date))) {
+      return res.status(401).json('Data provided are invalid');
+    }
+
+    const meetups = await Meetup.findAll({
+      where: {
+        date: {
+          [Op.between]: [startOfDay(parseISO(date)), endOfDay(parseISO(date))],
+        },
+      },
+      limit: 10,
+      offset: (page - 1) * 10,
+    });
+    return res.json(meetups);
     // return res.json(meetups);
   }
 
