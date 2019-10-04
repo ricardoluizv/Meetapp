@@ -7,6 +7,7 @@ import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import authMiddleware from './app/middlewares/auth';
 import MeetupsController from './app/controllers/MeetupsController';
+import MeetRegistrationController from './app/controllers/MeetRegistrationController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -19,7 +20,18 @@ routes.use(authMiddleware);
 routes.put('/users', UserController.update);
 routes.post('/files', upload.single('file'), FileController.store);
 
+// #region Meetups
+
 routes.post('/meetups', MeetupsController.store);
-routes.put('/meetups', MeetupsController.update);
+routes.put('/meetups/:id', MeetupsController.update);
+// Lista os eventos que o usuário logado abriu
+routes.get('/organizer/meetups', MeetupsController.organizerList);
+// Apaga os eventos que o usuário logado posui
+routes.delete('/meetups/:id', MeetupsController.delete);
+// Resitrar em um evento
+routes.post('/meetups/:meetup_id/register', MeetRegistrationController.store);
+
+routes.get('/meetups', MeetupsController.index);
+// #endregion
 
 export default routes;
