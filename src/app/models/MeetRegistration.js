@@ -13,6 +13,10 @@ class MeetRegistration extends Model {
     );
     return this;
   }
+
+  static associate(models) {
+    this.belongsTo(models.Meetup, { foreignKey: 'meetup_id', as: 'meetups' });
+  }
 }
 
 export default MeetRegistration;

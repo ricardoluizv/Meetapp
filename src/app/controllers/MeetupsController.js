@@ -11,6 +11,8 @@ import {
 } from 'date-fns';
 import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
+import User from '../models/User';
+import File from '../models/File';
 
 class MeetupController {
   async index(req, res) {
@@ -26,6 +28,18 @@ class MeetupController {
           [Op.between]: [startOfDay(parseISO(date)), endOfDay(parseISO(date))],
         },
       },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['url', 'path'],
+        },
+      ],
       limit: 10,
       offset: (page - 1) * 10,
     });

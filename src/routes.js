@@ -30,6 +30,7 @@ routes.get('/organizer/meetups', MeetupsController.organizerList);
 routes.delete('/meetups/:id', MeetupsController.delete);
 // Resitrar em um evento
 routes.post('/meetups/:meetup_id/register', MeetRegistrationController.store);
+routes.get('/meetups/registereds', MeetRegistrationController.index);
 
 routes.get('/meetups', MeetupsController.index);
 // #endregion

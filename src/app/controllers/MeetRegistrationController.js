@@ -1,5 +1,6 @@
-import { isAfter, format } from 'date-fns';
+import { isAfter, format, subHours } from 'date-fns';
 import pt from 'date-fns/locale';
+import { Op } from 'sequelize';
 
 import MeetRegistration from '../models/MeetRegistration';
 import Meetup from '../models/Meetup';
@@ -8,6 +9,26 @@ import Mail from '../../lib/Mail';
 import User from '../models/User';
 
 class MeetRegistrationController {
+  async index(req, res) {
+    const user_id = req.userId;
+
+    const meetupRegistered = await MeetRegistration.findAll({
+      where: {
+        user_id,
+        '$meetups.date$': { [Op.gt]: subHours(new Date(), 3) }, // meetups.date > data_atual
+      },
+      include: [
+        {
+          model: Meetup,
+          as: 'meetups',
+        },
+      ],
+      order: [[{ model: Meetup, as: 'meetups' }, 'date', 'DESC']],
+    });
+
+    return res.json(meetupRegistered);
+  }
+
   async store(req, res) {
     const user_id = req.userId;
     const { meetup_id } = req.params;
